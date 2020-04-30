@@ -15,5 +15,9 @@ struct ImageGallery {
     }
     
     var name: String
-    var images: [Image]
+    var images: [Image] = []
+    
+    init(name: String) {
+        self.name = name
+    }
 }

@@ -16,20 +16,41 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="bFh-LD-jUP">
-                            <size key="itemSize" width="128" height="128"/>
-                            <size key="estimatedItemSize" width="128" height="128"/>
+                            <size key="itemSize" width="300" height="300"/>
                             <size key="headerReferenceSize" width="0.0" height="0.0"/>
                             <size key="footerReferenceSize" width="0.0" height="0.0"/>
                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                         </collectionViewFlowLayout>
                         <cells>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="oCJ-VZ-hLI">
-                                <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Image Cell" id="oCJ-VZ-hLI" customClass="ImageCollectionViewCell" customModule="ImageGallery" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="300" height="300"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="NGy-S0-dil">
-                                    <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="300" height="300"/>
                                     <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="mtq-dz-yHb">
+                                            <rect key="frame" x="0.0" y="0.0" width="300" height="300"/>
+                                        </imageView>
+                                        <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="Dsx-uY-VFE">
+                                            <rect key="frame" x="131.5" y="131.5" width="37" height="37"/>
+                                            <color key="color" red="1" green="0.57637232540000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </activityIndicatorView>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="Dsx-uY-VFE" firstAttribute="centerX" secondItem="NGy-S0-dil" secondAttribute="centerX" id="05k-hn-3UU"/>
+                                        <constraint firstItem="Dsx-uY-VFE" firstAttribute="centerY" secondItem="NGy-S0-dil" secondAttribute="centerY" id="Dbz-vS-B2R"/>
+                                        <constraint firstItem="mtq-dz-yHb" firstAttribute="leading" secondItem="NGy-S0-dil" secondAttribute="leading" id="Fna-LM-BVN"/>
+                                        <constraint firstAttribute="bottom" secondItem="mtq-dz-yHb" secondAttribute="bottom" id="Qgo-hm-HIA"/>
+                                        <constraint firstItem="mtq-dz-yHb" firstAttribute="top" secondItem="NGy-S0-dil" secondAttribute="top" id="XNk-I7-bTX"/>
+                                        <constraint firstAttribute="trailing" secondItem="mtq-dz-yHb" secondAttribute="trailing" id="gsS-wN-gHo"/>
+                                    </constraints>
                                 </collectionViewCellContentView>
+                                <size key="customSize" width="300" height="300"/>
+                                <connections>
+                                    <outlet property="imageView" destination="mtq-dz-yHb" id="3yG-i8-LC9"/>
+                                    <outlet property="spinner" destination="Dsx-uY-VFE" id="oej-U8-Zw9"/>
+                                </connections>
                             </collectionViewCell>
                         </cells>
                         <connections>
