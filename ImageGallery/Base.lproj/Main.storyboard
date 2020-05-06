@@ -56,10 +56,16 @@
                         <connections>
                             <outlet property="dataSource" destination="HnZ-sd-1kQ" id="b93-Ui-FzH"/>
                             <outlet property="delegate" destination="HnZ-sd-1kQ" id="uGJ-qf-yHx"/>
+                            <outletCollection property="gestureRecognizers" destination="zoV-yk-rCg" appends="YES" id="dBr-cO-TWk"/>
                         </connections>
                     </collectionView>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="IGD-oX-2vF" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <pinchGestureRecognizer id="zoV-yk-rCg">
+                    <connections>
+                        <action selector="zoom:" destination="HnZ-sd-1kQ" id="YNC-Yh-dzX"/>
+                    </connections>
+                </pinchGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="545" y="578"/>
         </scene>

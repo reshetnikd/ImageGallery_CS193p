@@ -14,25 +14,29 @@ class ImageCollectionViewCell: UICollectionViewCell {
     
     var imageURL: URL? {
         didSet {
-            updateUI()
+            setImageForCell()
         }
     }
     
-    private func updateUI() {
+    private func setImageForCell() {
         if let url = imageURL {
             imageView.image = nil
             spinner.startAnimating()
             
-            let contents = try? Data(contentsOf: url)
-            
-            if let imageData = contents {
-                let image = UIImage(data: imageData)
-                imageView.image = image
-                // Set color for size debugging purposes.
-                imageView.backgroundColor = .black
+            DispatchQueue.global(qos: DispatchQoS.QoSClass.userInitiated).async {
+                let contents = try? Data(contentsOf: url)
+                
+                DispatchQueue.main.sync {
+                    if let imageData = contents, url == self.imageURL {
+                        let image = UIImage(data: imageData)
+                        self.imageView.image = image
+                        // Set color for size debugging purposes.
+                        self.imageView.backgroundColor = .black
+                    }
+                    
+                    self.spinner.stopAnimating()
+                }
             }
-            
-            spinner.stopAnimating()
         }
     }
     
