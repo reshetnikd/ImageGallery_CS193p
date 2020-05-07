@@ -30,8 +30,6 @@ class ImageCollectionViewCell: UICollectionViewCell {
                     if let imageData = contents, url == self.imageURL {
                         let image = UIImage(data: imageData)
                         self.imageView.image = image
-                        // Set color for size debugging purposes.
-                        self.imageView.backgroundColor = .black
                     }
                     
                     self.spinner.stopAnimating()

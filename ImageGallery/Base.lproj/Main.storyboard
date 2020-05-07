@@ -54,6 +54,24 @@
                                     <segue destination="cVI-Da-0pj" kind="show" identifier="Show Image" id="jKX-vG-rAc"/>
                                 </connections>
                             </collectionViewCell>
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" reuseIdentifier="Drop Placeholder Cell" id="y7K-dc-hNb">
+                                <rect key="frame" x="406" y="0.0" width="300" height="300"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="84U-Sd-ejx">
+                                    <rect key="frame" x="0.0" y="0.0" width="300" height="300"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="I7o-ST-5sj">
+                                            <rect key="frame" x="131.5" y="131.5" width="37" height="37"/>
+                                            <color key="color" red="1" green="0.57637232540000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </activityIndicatorView>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="I7o-ST-5sj" firstAttribute="centerX" secondItem="84U-Sd-ejx" secondAttribute="centerX" id="UaR-Wu-7UJ"/>
+                                        <constraint firstItem="I7o-ST-5sj" firstAttribute="centerY" secondItem="84U-Sd-ejx" secondAttribute="centerY" id="epX-RJ-3Za"/>
+                                    </constraints>
+                                </collectionViewCellContentView>
+                            </collectionViewCell>
                         </cells>
                         <connections>
                             <outlet property="dataSource" destination="HnZ-sd-1kQ" id="b93-Ui-FzH"/>
