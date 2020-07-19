@@ -9,6 +9,13 @@
 import UIKit
 
 class ImageGalleryTableViewController: UITableViewController {
+    private var lastIndexPath: IndexPath?
+    private var splitViewDetailCollectionController: ImageGalleryCollectionViewController? {
+        let navigationController = splitViewController?.viewControllers.last as? UINavigationController
+        
+        return navigationController?.viewControllers.first as? ImageGalleryCollectionViewController
+    }
+    
     var imageGalleries = [[ImageGallery]]()
 
     @IBAction func newGallery(_ sender: UIBarButtonItem) {
@@ -16,11 +23,7 @@ class ImageGalleryTableViewController: UITableViewController {
             ImageGallery(name: "New Gallery".madeUnique(withRespectTo: imageGalleries.flatMap{$0}.map{$0.name}))
         ]
         tableView.reloadData()
-        if self.tableView(self.tableView, numberOfRowsInSection: IndexPath(row: imageGalleries[0].count - 1, section: 0).section) >= IndexPath(row: imageGalleries[0].count - 1, section: 0).row {
-            Timer.scheduledTimer(withTimeInterval: 0.0, repeats: false) { (_) in
-                self.tableView.selectRow(at: IndexPath(row: self.imageGalleries[0].count - 1, section: 0), animated: false, scrollPosition: UITableView.ScrollPosition.none)
-            }
-        }
+        selectRow(at: IndexPath(row: imageGalleries[0].count - 1, section: 0))
     }
     
     override func viewDidLoad() {
@@ -48,11 +51,15 @@ class ImageGalleryTableViewController: UITableViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-//        tableView.selectRow(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: UITableView.ScrollPosition.none)
-        if self.tableView(self.tableView, numberOfRowsInSection: IndexPath(row: 0, section: 0).section) >= IndexPath(row: 0, section: 0).row {
-            Timer.scheduledTimer(withTimeInterval: 0.0, repeats: false) { (_) in
-                self.tableView.selectRow(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: UITableView.ScrollPosition.none)
-            }
+        let currentIndex = lastIndexPath != nil ? lastIndexPath! : IndexPath(row: 0, section: 0)
+        selectRow(at: currentIndex)
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        
+        if splitViewController?.preferredDisplayMode != UISplitViewController.DisplayMode.primaryOverlay {
+            splitViewController?.preferredDisplayMode = UISplitViewController.DisplayMode.primaryOverlay
         }
     }
 
@@ -78,11 +85,7 @@ class ImageGalleryTableViewController: UITableViewController {
                     if let name = imageGalleryCell.nameTextField.text {
                         self?.imageGalleries[indexPath.section][indexPath.row].name = name
                         self?.tableView.reloadData()
-                        if (self?.tableView((self?.tableView)!, numberOfRowsInSection: indexPath.section))! >= indexPath.row {
-                            Timer.scheduledTimer(withTimeInterval: 0.0, repeats: false) { (_) in
-                                tableView.selectRow(at: indexPath, animated: false, scrollPosition: UITableView.ScrollPosition.none)
-                            }
-                        }
+                        self?.selectRow(at: indexPath)
                     }
                 }
             }
@@ -101,6 +104,10 @@ class ImageGalleryTableViewController: UITableViewController {
         default:
             return nil
         }
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        showCollection(at: indexPath)
     }
 
     /*
@@ -122,22 +129,14 @@ class ImageGalleryTableViewController: UITableViewController {
                     tableView.deleteRows(at: [indexPath], with: .fade)
                     tableView.insertRows(at: [IndexPath(row: 0, section: 1)], with: UITableView.RowAnimation.automatic)
                 }, completion: { (_) in
-                    if self.tableView(self.tableView, numberOfRowsInSection: IndexPath(row: 0, section: 1).section) >= IndexPath(row: 0, section: 1).row {
-                        Timer.scheduledTimer(withTimeInterval: 0.3, repeats: false) { (_) in
-                            self.tableView.selectRow(at: IndexPath(row: 0, section: 1), animated: false, scrollPosition: UITableView.ScrollPosition.none)
-                        }
-                    }
+                    self.selectRow(at: IndexPath(row: 0, section: 1), after: 0.3)
                 })
             case 1:
                 tableView.performBatchUpdates({
                     imageGalleries[1].remove(at: indexPath.row)
                     tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.fade)
                 }, completion: { (_) in
-                    if self.tableView(self.tableView, numberOfRowsInSection: IndexPath(row: 0, section: 0).section) >= IndexPath(row: 0, section: 0).row {
-                        Timer.scheduledTimer(withTimeInterval: 0.0, repeats: false) { (_) in
-                            self.tableView.selectRow(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: UITableView.ScrollPosition.none)
-                        }
-                    }
+                    self.selectRow(at: IndexPath(row: 0, section: 0))
                 })
             default:
                 break
@@ -159,11 +158,7 @@ class ImageGalleryTableViewController: UITableViewController {
                         tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.fade)
                         tableView.insertRows(at: [IndexPath(row: lastIndex, section: 0)], with: UITableView.RowAnimation.automatic)
                     }, completion: { (_) in
-                        if self.tableView(self.tableView, numberOfRowsInSection: IndexPath(row: lastIndex, section: 0).section) >= IndexPath(row: lastIndex, section: 0).row {
-                            Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { (_) in
-                                self.tableView.selectRow(at: IndexPath(row: lastIndex, section: 0), animated: false, scrollPosition: UITableView.ScrollPosition.none)
-                            }
-                        }
+                        self.selectRow(at: IndexPath(row: lastIndex, section: 0), after: 0.5)
                     })
                     completionHandler(true)
                 }
@@ -200,5 +195,33 @@ class ImageGalleryTableViewController: UITableViewController {
         // Pass the selected object to the new view controller.
     }
     */
+    
+    private func selectRow(at indexPath: IndexPath, after delay: TimeInterval = 0.0) {
+        if tableView(self.tableView, numberOfRowsInSection: indexPath.section) >= indexPath.row {
+            Timer.scheduledTimer(withTimeInterval: delay, repeats: false, block: { (_) in
+                self.tableView.selectRow(at: indexPath, animated: false, scrollPosition: UITableView.ScrollPosition.none)
+                self.tableView(self.tableView, didSelectRowAt: indexPath)
+            })
+        }
+    }
+    
+    private func showCollection(at indexPath: IndexPath) {
+        if let imageGalleryViewController = splitViewDetailCollectionController {
+            lastIndexPath = indexPath
+            if indexPath.section != 1 {
+                imageGalleryViewController.gallery = imageGalleries[indexPath.section][indexPath.row]
+                imageGalleryViewController.title = imageGalleries[indexPath.section][indexPath.row].name
+                imageGalleryViewController.collectionView?.isUserInteractionEnabled = true
+                imageGalleryViewController.collectionView?.backgroundColor = UIColor.systemBackground
+            } else {
+                let newTitle = "Recently Deleted '" + imageGalleries[indexPath.section][indexPath.row].name + "'"
+                imageGalleryViewController.gallery = ImageGallery(name: newTitle)
+                imageGalleryViewController.title = newTitle
+                imageGalleryViewController.collectionView?.isUserInteractionEnabled = false
+                imageGalleryViewController.collectionView?.backgroundColor = UIColor.secondarySystemFill
+            }
+            imageGalleryViewController.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
+        }
+    }
 
 }

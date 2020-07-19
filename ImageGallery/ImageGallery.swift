@@ -8,7 +8,7 @@
 
 import UIKit
 
-struct ImageGallery {
+class ImageGallery {
     struct Image {
         let url: URL
         let aspectRatio: CGFloat
