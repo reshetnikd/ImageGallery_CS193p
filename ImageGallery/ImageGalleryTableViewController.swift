@@ -29,18 +29,8 @@ class ImageGalleryTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Test Data Model
-        imageGalleries = [
-            [
-                ImageGallery(name: "Gallery 1"),
-                ImageGallery(name: "Gallery 2"),
-                ImageGallery(name: "Gallery 3")
-            ],
-            [
-                ImageGallery(name: "Gallery 69")
-            ]
-        ]
-
+        // Initial data.
+        imageGalleries = [[ImageGallery(name: "Untitled")]]
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -123,14 +113,20 @@ class ImageGalleryTableViewController: UITableViewController {
         if editingStyle == .delete {
             switch indexPath.section {
             case 0:
-                tableView.performBatchUpdates({
-                    imageGalleries[1].insert(imageGalleries[0].remove(at: indexPath.row), at: 0)
-                    // Delete the row from the data source
-                    tableView.deleteRows(at: [indexPath], with: .fade)
-                    tableView.insertRows(at: [IndexPath(row: 0, section: 1)], with: UITableView.RowAnimation.automatic)
-                }, completion: { (_) in
-                    self.selectRow(at: IndexPath(row: 0, section: 1), after: 0.3)
-                })
+                if imageGalleries.count < 2 {
+                    let removedRow = imageGalleries[0].remove(at: indexPath.row)
+                    imageGalleries.insert([removedRow], at: 1)
+                    tableView.reloadData()
+                } else {
+                    tableView.performBatchUpdates({
+                        imageGalleries[1].insert(imageGalleries[0].remove(at: indexPath.row), at: 0)
+                        // Delete the row from the data source
+                        tableView.deleteRows(at: [indexPath], with: .fade)
+                        tableView.insertRows(at: [IndexPath(row: 0, section: 1)], with: UITableView.RowAnimation.automatic)
+                    }, completion: { (_) in
+                        self.selectRow(at: IndexPath(row: 0, section: 1), after: 0.6)
+                    })
+                }
             case 1:
                 tableView.performBatchUpdates({
                     imageGalleries[1].remove(at: indexPath.row)
