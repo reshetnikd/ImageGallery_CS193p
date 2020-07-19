@@ -11,7 +11,13 @@ import UIKit
 //private let reuseIdentifier = "Cell"
 
 class ImageGalleryCollectionViewController: UICollectionViewController, UICollectionViewDragDelegate, UICollectionViewDropDelegate, UICollectionViewDelegateFlowLayout {
-    var gallery = ImageGallery(name: "Untitled")
+    var gallery = ImageGallery(name: "Untitled") {
+        didSet {
+            if !(gallery === oldValue) {
+                collectionView.reloadData()
+            }
+        }
+    }
     
     var flowLayout: UICollectionViewFlowLayout? {
         return collectionView.collectionViewLayout as? UICollectionViewFlowLayout
@@ -36,6 +42,8 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
         collectionView.dragInteractionEnabled = true
         collectionView.dragDelegate = self
         collectionView.dropDelegate = self
+        collectionView.addGestureRecognizer(UIPinchGestureRecognizer(target: self, action: #selector(zoom(_:))))
+        navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
     }
     
     // MARK: UICollectionViewDragDelegate
