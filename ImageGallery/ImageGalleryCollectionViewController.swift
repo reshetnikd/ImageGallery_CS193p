@@ -11,7 +11,7 @@ import UIKit
 //private let reuseIdentifier = "Cell"
 
 class ImageGalleryCollectionViewController: UICollectionViewController, UICollectionViewDragDelegate, UICollectionViewDropDelegate, UICollectionViewDelegateFlowLayout {
-    var gallery = ImageGallery(name: "Untitled") {
+    var gallery: ImageGallery = ImageGallery(name: "Untitled") {
         didSet {
             if !(gallery === oldValue) {
                 collectionView.reloadData()
@@ -28,6 +28,8 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
             collectionView.collectionViewLayout.invalidateLayout()
         }
     }
+    
+    var garbadgeView: GarbageView = GarbageView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,16 +45,28 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
         collectionView.dragDelegate = self
         collectionView.dropDelegate = self
         collectionView.addGestureRecognizer(UIPinchGestureRecognizer(target: self, action: #selector(zoom(_:))))
-        navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
+//        navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
     }
     
-    // MARK: UICollectionViewDragDelegate
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        if let navigationBounds = navigationController?.navigationBar.bounds {
+            garbadgeView.frame = CGRect(x: navigationBounds.width * 0.6, y: 0.0, width: navigationBounds.width * 0.4, height: navigationBounds.height)
+            
+            let barButton = UIBarButtonItem(customView: garbadgeView)
+            navigationItem.rightBarButtonItem = barButton
+            navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
+        }
+    }
+    
+    // MARK: - UICollectionViewDragDelegate
     
     private func dragItems(at indexPath: IndexPath) -> [UIDragItem] {
         if let item = collectionView.cellForItem(at: indexPath) as? ImageCollectionViewCell, let image = item.imageView.image {
             let provider = NSItemProvider(object: image)
             let dragItem = UIDragItem(itemProvider: provider)
-            dragItem.localObject = gallery.images[indexPath.item]
+            dragItem.localObject = indexPath // gallery.images[indexPath.item]
             return [dragItem]
         } else {
             return []
@@ -67,7 +81,7 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
         return dragItems(at: indexPath)
     }
     
-    // MARK: UICollectionViewDropDelegate
+    // MARK: - UICollectionViewDropDelegate
     
     func collectionView(_ collectionView: UICollectionView, canHandle session: UIDropSession) -> Bool {
         if collectionView.hasActiveDrag {
@@ -133,7 +147,7 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
         }
     }
 
-    // MARK: Navigation
+    // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -148,12 +162,11 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
         }
     }
 
-    // MARK: UICollectionViewDataSource
+    // MARK: - UICollectionViewDataSource
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
-
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return gallery.images.count
@@ -170,7 +183,7 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
         return cell
     }
     
-    // MARK: UICollectionViewDelegateFlowLayout
+    // MARK: - UICollectionViewDelegateFlowLayout
     
     @IBAction func zoom(_ sender: UIPinchGestureRecognizer) {
         if sender.state == UIGestureRecognizer.State.changed {
@@ -187,7 +200,7 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
         }
     }
 
-    // MARK: UICollectionViewDelegate
+    // MARK: - UICollectionViewDelegate
 
     /*
     // Uncomment this method to specify if the specified item should be highlighted during tracking

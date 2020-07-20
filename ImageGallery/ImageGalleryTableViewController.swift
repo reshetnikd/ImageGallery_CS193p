@@ -16,7 +16,30 @@ class ImageGalleryTableViewController: UITableViewController {
         return navigationController?.viewControllers.first as? ImageGalleryCollectionViewController
     }
     
-    var imageGalleries = [[ImageGallery]]()
+    let defaults = UserDefaults.standard
+    var imageGalleries: [[ImageGallery]] = [[ImageGallery]]()
+    var savedImageGalleries: [[ImageGallery]]? {
+        get {
+            if let savedData = defaults.object(forKey: "Galleries") as? Data {
+                let decoder = JSONDecoder()
+                
+                if let loadedData = try? decoder.decode([[ImageGallery]].self, from: savedData) {
+                    return loadedData
+                }
+            }
+            
+            return nil
+        }
+        set {
+            if newValue != nil {
+                let encoder = JSONEncoder()
+                
+                if let json = try? encoder.encode(newValue!) {
+                    defaults.set(json, forKey: "Galleries")
+                }
+            }
+        }
+    }
 
     @IBAction func newGallery(_ sender: UIBarButtonItem) {
         imageGalleries[0] += [
@@ -30,7 +53,11 @@ class ImageGalleryTableViewController: UITableViewController {
         super.viewDidLoad()
         
         // Initial data.
-        imageGalleries = [[ImageGallery(name: "Untitled")]]
+        if let extractedGalleries = savedImageGalleries {
+            imageGalleries = extractedGalleries
+        } else {
+            imageGalleries = [[ImageGallery(name: "Untitled")]]
+        }
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -43,6 +70,12 @@ class ImageGalleryTableViewController: UITableViewController {
         
         let currentIndex = lastIndexPath != nil ? lastIndexPath! : IndexPath(row: 0, section: 0)
         selectRow(at: currentIndex)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        savedImageGalleries = imageGalleries
     }
     
     override func viewWillLayoutSubviews() {
