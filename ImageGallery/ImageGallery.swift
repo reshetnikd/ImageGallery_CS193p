@@ -8,8 +8,8 @@
 
 import UIKit
 
-class ImageGallery {
-    struct Image {
+class ImageGallery: Codable {
+    struct Image: Codable {
         let url: URL
         let aspectRatio: CGFloat
     }
