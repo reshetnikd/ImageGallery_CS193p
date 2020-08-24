@@ -245,5 +245,20 @@
             </objects>
             <point key="canvasLocation" x="545" y="-153"/>
         </scene>
+        <!--Document Browser View Controller-->
+        <scene sceneID="5Kh-9S-yeE">
+            <objects>
+                <viewController id="nxG-yq-WnW" customClass="DocumentBrowserViewController" customModule="DocumentBasedEmojiArt" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="qhQ-EL-th9">
+                        <rect key="frame" x="0.0" y="0.0" width="1112" height="834"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="lph-3g-A9X"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Vmr-QV-zYC" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-171" y="991"/>
+        </scene>
     </scenes>
 </document>
