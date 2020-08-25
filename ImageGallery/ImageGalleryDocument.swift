@@ -10,15 +10,18 @@ import UIKit
 
 class ImageGalleryDocument: UIDocument {
     var thumbnail: UIImage?
+    var imageGallery: ImageGallery?
     
     override func contents(forType typeName: String) throws -> Any {
         // Encode your document with an instance of NSData or NSFileWrapper
-        return Data()
+        return imageGallery?.json ?? Data()
     }
     
     override func load(fromContents contents: Any, ofType typeName: String?) throws {
         // Load your document from contents
-        
+        if let json = contents as? Data {
+            imageGallery = ImageGallery(with: json)
+        }
     }
     
     override func fileAttributesToWrite(to url: URL, for saveOperation: UIDocument.SaveOperation) throws -> [AnyHashable : Any] {

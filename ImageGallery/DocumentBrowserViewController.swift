@@ -9,13 +9,14 @@
 import UIKit
 
 class DocumentBrowserViewController: UIDocumentBrowserViewController, UIDocumentBrowserViewControllerDelegate {
+    var template: URL?
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         delegate = self
         
-        allowsDocumentCreation = true
+        allowsDocumentCreation = false
         allowsPickingMultipleItems = false
         
         // Update the style of the UIDocumentBrowserViewController
@@ -25,6 +26,18 @@ class DocumentBrowserViewController: UIDocumentBrowserViewController, UIDocument
         // Specify the allowed content types of your application via the Info.plist.
 
         // Do any additional setup after loading the view.
+        if UIDevice.current.userInterfaceIdiom == UIUserInterfaceIdiom.pad {
+            template = try? FileManager.default.url(
+                for: FileManager.SearchPathDirectory.applicationSupportDirectory,
+                in: FileManager.SearchPathDomainMask.userDomainMask,
+                appropriateFor: nil,
+                create: true
+            ).appendingPathComponent("Untitled.json")
+            
+            if template != nil {
+                allowsDocumentCreation = FileManager.default.createFile(atPath: template!.path, contents: Data(), attributes: nil)
+            }
+        }
     }
     
     // MARK: UIDocumentBrowserViewControllerDelegate
@@ -32,7 +45,11 @@ class DocumentBrowserViewController: UIDocumentBrowserViewController, UIDocument
     func documentBrowser(_ controller: UIDocumentBrowserViewController, didRequestDocumentCreationWithHandler importHandler: @escaping (URL?, UIDocumentBrowserViewController.ImportMode) -> Void) {
         // Set the URL for the new document here. Optionally, you can present a template chooser before calling the importHandler.
         // Make sure the importHandler is always called, even if the user cancels the creation request.
-        
+        if template != nil {
+            importHandler(template, UIDocumentBrowserViewController.ImportMode.copy)
+        } else {
+            importHandler(nil, UIDocumentBrowserViewController.ImportMode.none)
+        }
     }
     
     func documentBrowser(_ controller: UIDocumentBrowserViewController, didPickDocumentsAt documentURLs: [URL]) {
@@ -57,6 +74,13 @@ class DocumentBrowserViewController: UIDocumentBrowserViewController, UIDocument
     func presentDocument(at documentURL: URL) {
         
         let storyBoard = UIStoryboard(name: "Main", bundle: nil)
+        let imageGalleryViewController = storyBoard.instantiateViewController(identifier: "ImageGallery")
+        
+        if let imageGallery = imageGalleryViewController.contents as? ImageGalleryCollectionViewController {
+            imageGallery.document = ImageGalleryDocument(fileURL: documentURL)
+        }
+        
+        present(imageGalleryViewController, animated: true)
     }
 
     /*
