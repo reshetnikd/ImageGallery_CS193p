@@ -32,7 +32,7 @@ class DocumentBrowserViewController: UIDocumentBrowserViewController, UIDocument
                 in: FileManager.SearchPathDomainMask.userDomainMask,
                 appropriateFor: nil,
                 create: true
-            ).appendingPathComponent("Untitled.json")
+            ).appendingPathComponent("Untitled.gallery")
             
             if template != nil {
                 allowsDocumentCreation = FileManager.default.createFile(atPath: template!.path, contents: Data(), attributes: nil)
