@@ -11,11 +11,9 @@ import UIKit
 //private let reuseIdentifier = "Cell"
 
 class ImageGalleryCollectionViewController: UICollectionViewController, UICollectionViewDragDelegate, UICollectionViewDropDelegate, UICollectionViewDelegateFlowLayout {
-    var gallery: ImageGallery = ImageGallery(name: "Untitled") {
+    var gallery: ImageGallery = ImageGallery() {
         didSet {
-            if !(gallery === oldValue) {
-                collectionView.reloadData()
-            }
+            collectionView.reloadData()
         }
     }
     
@@ -29,7 +27,12 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
         }
     }
     
+    var thumbnailImage: UIImageView? {
+        return (self.collectionView!.cellForItem(at: IndexPath(item: 0, section: 0)) as? ImageCollectionViewCell)?.imageView
+    }
+    
     var garbadgeView: GarbageView = GarbageView()
+    var document: ImageGalleryDocument?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,15 +51,50 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
 //        navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         
         if let navigationBounds = navigationController?.navigationBar.bounds {
+            garbadgeView.garbageViewDidChanged = { [weak self] in
+                self?.documentChanged()
+            }
             garbadgeView.frame = CGRect(x: navigationBounds.width * 0.6, y: 0.0, width: navigationBounds.width * 0.4, height: navigationBounds.height)
             
             let barButton = UIBarButtonItem(customView: garbadgeView)
             navigationItem.rightBarButtonItem = barButton
-            navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        document?.open(completionHandler: { (success) in
+            if success {
+                self.title = self.document?.localizedName
+                self.gallery = self.document?.imageGallery ?? ImageGallery()
+            }
+        })
+    }
+    
+    // MARK: - UIDocumentBrowser
+    
+    @IBAction func done(_ sender: UIBarButtonItem) {
+        if document?.imageGallery != nil {
+            if let thumbnail = thumbnailImage?.snapshot {
+                document?.thumbnail = thumbnail
+            }
+        }
+        
+        dismiss(animated: true) {
+            self.document?.close()
+        }
+    }
+    
+    func documentChanged() {
+        document?.imageGallery = gallery
+        
+        if document?.imageGallery != nil {
+            document?.updateChangeCount(UIDocument.ChangeKind.done)
         }
     }
     
@@ -112,6 +150,7 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
                         collectionView.insertItems(at: [destinationIndexPath])
                     }, completion: nil)
                     coordinator.drop(item.dragItem, toItemAt: destinationIndexPath)
+                    self.documentChanged()
                 }
             } else {
                 // Perform drop from other app.
@@ -138,6 +177,7 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
                             placeholderContext.commitInsertion { (insertionIndexPath) in
                                 self.gallery.images.insert(ImageGallery.Image(url: imageURLLocal!, aspectRatio: aspectRatioLocal!), at: insertionIndexPath.item)
                             }
+                            self.documentChanged()
                         } else {
                             placeholderContext.deletePlaceholder()
                         }

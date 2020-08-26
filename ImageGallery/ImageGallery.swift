@@ -8,16 +8,26 @@
 
 import UIKit
 
-class ImageGallery: Codable {
+struct ImageGallery: Codable {
     struct Image: Codable {
         let url: URL
         let aspectRatio: CGFloat
     }
     
-    var name: String
     var images: [Image] = []
+    var json: Data? {
+        return try? JSONEncoder().encode(self)
+    }
     
-    init(name: String) {
-        self.name = name
+    init() {
+        self.images = [Image]()
+    }
+    
+    init?(with data: Data) {
+        if let newValue = try? JSONDecoder().decode(ImageGallery.self, from: data) {
+            self = newValue
+        } else {
+            return nil
+        }
     }
 }
