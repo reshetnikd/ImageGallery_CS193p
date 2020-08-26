@@ -51,8 +51,8 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
 //        navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         
         if let navigationBounds = navigationController?.navigationBar.bounds {
             garbadgeView.garbageViewDidChanged = { [weak self] in
@@ -83,10 +83,10 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
             if let thumbnail = thumbnailImage?.snapshot {
                 document?.thumbnail = thumbnail
             }
-            
-            dismiss(animated: true) {
-                self.document?.close()
-            }
+        }
+        
+        dismiss(animated: true) {
+            self.document?.close()
         }
     }
     

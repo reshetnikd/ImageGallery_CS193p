@@ -80,7 +80,7 @@
                         </connections>
                     </collectionView>
                     <navigationItem key="navigationItem" id="njj-dG-EOc">
-                        <barButtonItem key="rightBarButtonItem" style="done" systemItem="done" id="sg2-F1-8TK">
+                        <barButtonItem key="leftBarButtonItem" style="done" systemItem="done" id="sg2-F1-8TK">
                             <connections>
                                 <action selector="done:" destination="HnZ-sd-1kQ" id="gMA-MY-w8z"/>
                             </connections>

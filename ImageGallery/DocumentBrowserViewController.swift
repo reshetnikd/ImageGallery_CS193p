@@ -80,6 +80,7 @@ class DocumentBrowserViewController: UIDocumentBrowserViewController, UIDocument
             imageGallery.document = ImageGalleryDocument(fileURL: documentURL)
         }
         
+        imageGalleryViewController.modalPresentationStyle = UIModalPresentationStyle.fullScreen
         present(imageGalleryViewController, animated: true)
     }
 
